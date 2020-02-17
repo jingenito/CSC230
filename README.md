@@ -4,6 +4,5 @@
 <h3>Term: Spring 2020</h3>
 
 <p>
-  Contains all projects and homework assignments done in the CSC 230 class.<br/>
-  The tasks.json file 
+  Contains all projects and homework assignments done in the CSC 230 class.
 </p>
