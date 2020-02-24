@@ -9,35 +9,35 @@ struct Node{
     bool solution;
 } gridNode;
 
+//diagonal functions
+void checkDiagonals(vector<vector<Node>> &, char*);
+//verticle functions
 void checkUpDown(vector<vector<Node>> &, char*);
 bool checkVerticle(vector<vector<Node>> &, char*, int, int, bool);
 void drawVerticle(vector<vector<Node>> &, int, int, int);
+//horizontal functions
 void checkLeftRight(vector<vector<Node>> &, char*);
 void drawLeftRight(vector<vector<Node>> &, int, int, int);
 bool checkHorizontal(vector<vector<Node>> &, char*, int, int, bool);
+//output function
 void printMatrix(vector<vector<Node>> &);
 
 int main(int argc, char **argv)
 {
-    //get all command arguments
-    char* args[10];
-    for(int i = 1; i < argc; ++i){
-        *(args + (i-1)) = *(argv + i);
-    }
-
     //read size from the input file
     int x, y;
     cin >> x;
     cin >> y;
 
-    //fill the two dimensional array from the input file
+    //initialize the char matrix
     vector< vector<Node> > matrix;
     matrix.resize(x);
-
+    //read the matrix from the input file
     for(int i = 0; i < x; ++i){
         matrix[i].resize(y);
 
         for(int j = 0; j < y; ++j){
+            //create the node and insert to the matrix
             Node n;
             cin >> n.chr;
             n.solution = false;
@@ -45,14 +45,62 @@ int main(int argc, char **argv)
         }
     }
 
-    for(int i = 0; i < argc - 1; ++i){
-        checkLeftRight(matrix, *(args + i));
-        checkUpDown(matrix, *(args + i));
+    //loop over the input arguments excluding the name of the program
+    for(int i = 1; i < argc; ++i){
+        //check every direction
+        checkLeftRight(matrix, *(argv + i));
+        checkUpDown(matrix, *(argv + i));
     }
 
     printMatrix(matrix);
 
     return 0;
+}
+
+void checkDiagonals(vector<vector<Node>> &matrix, char* word){
+    cout << "Diagonals incomplete!!" << endl;
+    for(int i = 0; i < matrix.size(); ++i){
+        for(int j = 0; j < matrix[0].size(); ++j){
+            if(!matrix[i][j].solution){
+                if (checkVerticle(matrix, word, i, j, true) ){
+                    drawVerticle(matrix, i, i + strlen(word) - 1, j);
+                }else if ( checkVerticle(matrix, word, i, j, false) ){
+                    drawVerticle(matrix, i - strlen(word) + 1, i, j);
+                }
+            }
+        }
+    }
+}
+
+bool checkDiagonal(vector<vector<Node>> &matrix, char* word, int x0, int y0, bool ltr){
+    if(ltr){
+        //storing length of word
+        int len = strlen(word);
+        //adjust the end indeces
+        int xn = x0 + len - 1;
+        if (xn >= matrix[0].size()){ return false; }
+        int yn = y0 + len - 1;
+        if (yn >= matrix.size()){ return false; }
+
+        for(int i = 0; i < strlen(word); ++i){
+
+        }
+        // for(int i = x; i <= endInd; ++i){
+        //     int ind = i - x;
+        //     if(matrix[i][y].chr != *(word + ind)){ return false; }
+        // }
+    }else{
+        //adjust the end index
+        int endInd = x0 - strlen(word) + 1;
+        if (endInd < 0){ return false; }
+
+        for(int i = x0; i >= endInd; --i){
+            int ind = x0 - i;
+            if(matrix[i][y0].chr != *(word + ind)){ return false; }
+        }
+    }
+
+    return true;
 }
 
 void checkUpDown(vector<vector<Node>> &matrix, char* word){
@@ -71,6 +119,7 @@ void checkUpDown(vector<vector<Node>> &matrix, char* word){
 
 bool checkVerticle(vector<vector<Node>> &matrix, char* word, int x, int y, bool topDown){
     if(topDown){
+        //adjust the end index
         int endInd = x + strlen(word) - 1;
         if (endInd >= matrix.size()){ return false; }
 
@@ -79,6 +128,7 @@ bool checkVerticle(vector<vector<Node>> &matrix, char* word, int x, int y, bool 
             if(matrix[i][y].chr != *(word + ind)){ return false; }
         }
     }else{
+        //adjust the end index
         int endInd = x - strlen(word) + 1;
         if (endInd < 0){ return false; }
 
@@ -119,6 +169,7 @@ void drawLeftRight(vector<vector<Node>> &matrix, int row, int startCol, int endC
 
 bool checkHorizontal(vector<vector<Node>> &matrix, char* word, int x, int y, bool ltr){
     if(ltr){
+        //adjust the end index
         int endInd = y + strlen(word) - 1;
         if (endInd >= matrix[0].size()){ return false; }
         
@@ -127,6 +178,7 @@ bool checkHorizontal(vector<vector<Node>> &matrix, char* word, int x, int y, boo
             if(matrix[x][i].chr != *(word + ind)){ return false; }
         }
     }else{
+        //adjust the end index
         int endInd = y - strlen(word) + 1;
         if (endInd < 0){ return false; }
 
@@ -139,6 +191,7 @@ bool checkHorizontal(vector<vector<Node>> &matrix, char* word, int x, int y, boo
     return true;
 }
 
+//only print characters in the solution - add * to excluded chars
 void printMatrix(vector<vector<Node>> &matrix){
     for(int i = 0; i < matrix.size(); ++i){
         for(int j = 0; j < matrix[0].size(); ++j){
