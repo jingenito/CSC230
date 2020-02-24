@@ -9,6 +9,8 @@ struct Node{
     bool solution;
 } gridNode;
 
+//diagonal functions
+void checkDiagonals(vector<vector<Node>> &, char*);
 //verticle functions
 void checkUpDown(vector<vector<Node>> &, char*);
 bool checkVerticle(vector<vector<Node>> &, char*, int, int, bool);
@@ -53,6 +55,52 @@ int main(int argc, char **argv)
     printMatrix(matrix);
 
     return 0;
+}
+
+void checkDiagonals(vector<vector<Node>> &matrix, char* word){
+    cout << "Diagonals incomplete!!" << endl;
+    for(int i = 0; i < matrix.size(); ++i){
+        for(int j = 0; j < matrix[0].size(); ++j){
+            if(!matrix[i][j].solution){
+                if (checkVerticle(matrix, word, i, j, true) ){
+                    drawVerticle(matrix, i, i + strlen(word) - 1, j);
+                }else if ( checkVerticle(matrix, word, i, j, false) ){
+                    drawVerticle(matrix, i - strlen(word) + 1, i, j);
+                }
+            }
+        }
+    }
+}
+
+bool checkDiagonal(vector<vector<Node>> &matrix, char* word, int x0, int y0, bool ltr){
+    if(ltr){
+        //storing length of word
+        int len = strlen(word);
+        //adjust the end indeces
+        int xn = x0 + len - 1;
+        if (xn >= matrix[0].size()){ return false; }
+        int yn = y0 + len - 1;
+        if (yn >= matrix.size()){ return false; }
+
+        for(int i = 0; i < strlen(word); ++i){
+
+        }
+        // for(int i = x; i <= endInd; ++i){
+        //     int ind = i - x;
+        //     if(matrix[i][y].chr != *(word + ind)){ return false; }
+        // }
+    }else{
+        //adjust the end index
+        int endInd = x0 - strlen(word) + 1;
+        if (endInd < 0){ return false; }
+
+        for(int i = x0; i >= endInd; --i){
+            int ind = x0 - i;
+            if(matrix[i][y0].chr != *(word + ind)){ return false; }
+        }
+    }
+
+    return true;
 }
 
 void checkUpDown(vector<vector<Node>> &matrix, char* word){
