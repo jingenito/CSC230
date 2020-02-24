@@ -1,29 +1,23 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
 struct Node{
     char chr;
-    bool included;
+    bool solution;
 } gridNode;
 
-// bool check (vector< vector<char> > &matrix, char *word, int x, int y){
-//     if(x >= matrix.size()){ return false; }
-
-//     for(int i = y; i < matrix[x].size(); ++i){
-//         if(matrix[x][i] != *(word + (i - y))) {return false; }
-//     }
-
-//     return true;
-// }
+void checkLeftRight(vector<vector<Node>> &, char*);
+void drawLeftRight(vector<vector<Node>> &, int, int, int);
+bool checkHorizontal(vector<vector<Node>> &, char*, int, int, bool);
+void printMatrix(vector<vector<Node>> &);
 
 int main(int argc, char **argv)
 {
     //get all command arguments
-    char **args;
+    char* args[10];
     for(int i = 1; i < argc; ++i){
         *(args + (i-1)) = *(argv + i);
     }
@@ -43,25 +37,71 @@ int main(int argc, char **argv)
         for(int j = 0; j < y; ++j){
             Node n;
             cin >> n.chr;
-            n.included = false;
+            n.solution = false;
             matrix[i][j] = n;
         }
     }
 
-    //check all rows LTR
+    for(int i = 0; i < argc - 1; ++i){
+        checkLeftRight(matrix, *(args + i));
+    }
 
-
-    //check all rows TRL
+    printMatrix(matrix);
 
     return 0;
 }
 
-bool checkAscending(vector<vector<Node>> &matrix, char *word, int x, int y){
-    if(x >= matrix.size()){ return false; }
+void checkLeftRight(vector<vector<Node>> &matrix, char* word){
+    for(int i = 0; i < matrix.size(); ++i){
+        for(int j = 0; j < matrix[0].size(); ++j){
+            if (!matrix[i][j].solution){
+                if (checkHorizontal(matrix, word, i, j, true) ){
+                    drawLeftRight(matrix, i, j, j + strlen(word) - 1);
+                }else if ( checkHorizontal(matrix, word, i, j, false) ){
+                    drawLeftRight(matrix, i, j - strlen(word) + 1, j);
+                }
+            }
+        }
+    }
+}
 
-    for(int i = y; i < matrix[x].size(); ++i){
-        if(matrix[x][i].chr != *(word + (i - y))) {return false; }
+void drawLeftRight(vector<vector<Node>> &matrix, int row, int startCol, int endCol){
+    for(int i = startCol; i <= endCol; ++i){
+        matrix[row][i].solution = true;
+    }
+}
+
+bool checkHorizontal(vector<vector<Node>> &matrix, char* word, int x, int y, bool ltr){
+    if(ltr){
+        int endInd = y + strlen(word) - 1;
+        if (endInd >= matrix[0].size()){ return false; }
+        
+        for(int i = y; i <= endInd; ++i){
+            int ind = i - y;
+            if(matrix[x][i].chr != *(word + ind)){ return false; }
+        }
+    }else{
+        int endInd = y - strlen(word) + 1;
+        if (endInd < 0){ return false; }
+
+        for(int i = y; i >= endInd; --i){
+            int ind = y - i;
+            if(matrix[x][i].chr != *(word + ind)){ return false; }
+        }
     }
 
     return true;
+}
+
+void printMatrix(vector<vector<Node>> &matrix){
+    for(int i = 0; i < matrix.size(); ++i){
+        for(int j = 0; j < matrix[0].size(); ++j){
+            if(matrix[i][j].solution){
+                cout << matrix[i][j].chr << " ";
+            }else{
+                cout << "* ";
+            }
+        }
+        cout << endl;
+    }
 }
