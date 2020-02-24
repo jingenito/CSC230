@@ -9,6 +9,9 @@ struct Node{
     bool solution;
 } gridNode;
 
+void checkUpDown(vector<vector<Node>> &, char*);
+bool checkVerticle(vector<vector<Node>> &, char*, int, int, bool);
+void drawVerticle(vector<vector<Node>> &, int, int, int);
 void checkLeftRight(vector<vector<Node>> &, char*);
 void drawLeftRight(vector<vector<Node>> &, int, int, int);
 bool checkHorizontal(vector<vector<Node>> &, char*, int, int, bool);
@@ -44,11 +47,54 @@ int main(int argc, char **argv)
 
     for(int i = 0; i < argc - 1; ++i){
         checkLeftRight(matrix, *(args + i));
+        checkUpDown(matrix, *(args + i));
     }
 
     printMatrix(matrix);
 
     return 0;
+}
+
+void checkUpDown(vector<vector<Node>> &matrix, char* word){
+    for(int i = 0; i < matrix.size(); ++i){
+        for(int j = 0; j < matrix[0].size(); ++j){
+            if(!matrix[i][j].solution){
+                if (checkVerticle(matrix, word, i, j, true) ){
+                    drawVerticle(matrix, i, i + strlen(word) - 1, j);
+                }else if ( checkVerticle(matrix, word, i, j, false) ){
+                    drawVerticle(matrix, i - strlen(word) + 1, i, j);
+                }
+            }
+        }
+    }
+}
+
+bool checkVerticle(vector<vector<Node>> &matrix, char* word, int x, int y, bool topDown){
+    if(topDown){
+        int endInd = x + strlen(word) - 1;
+        if (endInd >= matrix.size()){ return false; }
+
+        for(int i = x; i <= endInd; ++i){
+            int ind = i - x;
+            if(matrix[i][y].chr != *(word + ind)){ return false; }
+        }
+    }else{
+        int endInd = x - strlen(word) + 1;
+        if (endInd < 0){ return false; }
+
+        for(int i = x; i >= endInd; --i){
+            int ind = x - i;
+            if(matrix[i][y].chr != *(word + ind)){ return false; }
+        }
+    }
+
+    return true;
+}
+
+void drawVerticle(vector<vector<Node>> &matrix, int startRow, int endRow, int col){
+    for(int i = startRow; i <= endRow; ++i){
+        matrix[i][col].solution = true;
+    }
 }
 
 void checkLeftRight(vector<vector<Node>> &matrix, char* word){
