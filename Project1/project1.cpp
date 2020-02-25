@@ -7,19 +7,11 @@ using namespace std;
 struct Node{
     char chr;
     bool solution;
-} gridNode;
+};
 
-//diagonal functions
-void checkDiagonals(vector<vector<Node>> &, char*);
-//verticle functions
-void checkUpDown(vector<vector<Node>> &, char*);
-bool checkVerticle(vector<vector<Node>> &, char*, int, int, bool);
-void drawVerticle(vector<vector<Node>> &, int, int, int);
-//horizontal functions
-void checkLeftRight(vector<vector<Node>> &, char*);
-void drawLeftRight(vector<vector<Node>> &, int, int, int);
-bool checkHorizontal(vector<vector<Node>> &, char*, int, int, bool);
-//output function
+void findWord(vector<vector<Node>> &, char*);
+void drawWord(vector<vector<Node>> &, char*, int, int, int, int);
+bool checkWord(vector<vector<Node>> &, char*, int, int, int, int);
 void printMatrix(vector<vector<Node>> &);
 
 int main(int argc, char **argv)
@@ -47,9 +39,7 @@ int main(int argc, char **argv)
 
     //loop over the input arguments excluding the name of the program
     for(int i = 1; i < argc; ++i){
-        //check every direction
-        checkLeftRight(matrix, *(argv + i));
-        checkUpDown(matrix, *(argv + i));
+        findWord(matrix, *(argv + i));
     }
 
     printMatrix(matrix);
@@ -57,137 +47,59 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void checkDiagonals(vector<vector<Node>> &matrix, char* word){
-    cout << "Diagonals incomplete!!" << endl;
+void findWord(vector<vector<Node>> &matrix, char* word){
     for(int i = 0; i < matrix.size(); ++i){
         for(int j = 0; j < matrix[0].size(); ++j){
-            if(!matrix[i][j].solution){
-                if (checkVerticle(matrix, word, i, j, true) ){
-                    drawVerticle(matrix, i, i + strlen(word) - 1, j);
-                }else if ( checkVerticle(matrix, word, i, j, false) ){
-                    drawVerticle(matrix, i - strlen(word) + 1, i, j);
-                }
+            //check left to right
+            if(checkWord(matrix, word, i, 0, j, 1)){
+                drawWord(matrix, word, i, 0, j, 1);
+            }
+            //check right to left
+            if(checkWord(matrix, word, i, 0, j, -1)){
+                drawWord(matrix, word, i, 0, j, -1);
+            }
+            //check top to bottom
+            if(checkWord(matrix, word, i, 1, j, 0)){
+                drawWord(matrix, word, i, 1, j, 0);
+            }
+            //check bottom to top
+            if(checkWord(matrix, word, i, -1, j, 0)){
+                drawWord(matrix, word, i, -1, j, 0);
+            }
+            //check left to right diagonal
+            if(checkWord(matrix, word, i, 1, j, 1)){
+                drawWord(matrix, word, i, 1, j, 1);
+            }
+            //check right to left diagonal
+            if(checkWord(matrix, word, i, -1, j, -1)){
+                drawWord(matrix, word, i, -1, j, -1);
             }
         }
     }
 }
 
-bool checkDiagonal(vector<vector<Node>> &matrix, char* word, int x0, int y0, bool ltr){
-    if(ltr){
-        //storing length of word
-        int len = strlen(word);
-        //adjust the end indeces
-        int xn = x0 + len - 1;
-        if (xn >= matrix[0].size()){ return false; }
-        int yn = y0 + len - 1;
-        if (yn >= matrix.size()){ return false; }
+void drawWord(vector<vector<Node>> &matrix, char* word, int x, int delX, int y, int delY){
+    int _count = 0;
+    while(_count < strlen(word)){
+        matrix[x][y].solution = true;
 
-        for(int i = 0; i < strlen(word); ++i){
-
-        }
-        // for(int i = x; i <= endInd; ++i){
-        //     int ind = i - x;
-        //     if(matrix[i][y].chr != *(word + ind)){ return false; }
-        // }
-    }else{
-        //adjust the end index
-        int endInd = x0 - strlen(word) + 1;
-        if (endInd < 0){ return false; }
-
-        for(int i = x0; i >= endInd; --i){
-            int ind = x0 - i;
-            if(matrix[i][y0].chr != *(word + ind)){ return false; }
-        }
-    }
-
-    return true;
-}
-
-void checkUpDown(vector<vector<Node>> &matrix, char* word){
-    for(int i = 0; i < matrix.size(); ++i){
-        for(int j = 0; j < matrix[0].size(); ++j){
-            if(!matrix[i][j].solution){
-                if (checkVerticle(matrix, word, i, j, true) ){
-                    drawVerticle(matrix, i, i + strlen(word) - 1, j);
-                }else if ( checkVerticle(matrix, word, i, j, false) ){
-                    drawVerticle(matrix, i - strlen(word) + 1, i, j);
-                }
-            }
-        }
+        _count++;
+        x += delX;
+        y += delY;
     }
 }
 
-bool checkVerticle(vector<vector<Node>> &matrix, char* word, int x, int y, bool topDown){
-    if(topDown){
-        //adjust the end index
-        int endInd = x + strlen(word) - 1;
-        if (endInd >= matrix.size()){ return false; }
+bool checkWord(vector<vector<Node>> &matrix, char* word, int x, int delX, int y, int delY){
+    int _count = 0;
+    while(_count < strlen(word)){
+        if(x < 0 || x >= matrix.size() || y < 0 || y >= matrix[0].size()){ return false; }
+        if(matrix[x][y].chr != *(word + _count)){ return false; }
 
-        for(int i = x; i <= endInd; ++i){
-            int ind = i - x;
-            if(matrix[i][y].chr != *(word + ind)){ return false; }
-        }
-    }else{
-        //adjust the end index
-        int endInd = x - strlen(word) + 1;
-        if (endInd < 0){ return false; }
-
-        for(int i = x; i >= endInd; --i){
-            int ind = x - i;
-            if(matrix[i][y].chr != *(word + ind)){ return false; }
-        }
+        _count++;
+        x += delX;
+        y += delY;
     }
-
-    return true;
-}
-
-void drawVerticle(vector<vector<Node>> &matrix, int startRow, int endRow, int col){
-    for(int i = startRow; i <= endRow; ++i){
-        matrix[i][col].solution = true;
-    }
-}
-
-void checkLeftRight(vector<vector<Node>> &matrix, char* word){
-    for(int i = 0; i < matrix.size(); ++i){
-        for(int j = 0; j < matrix[0].size(); ++j){
-            if (!matrix[i][j].solution){
-                if (checkHorizontal(matrix, word, i, j, true) ){
-                    drawLeftRight(matrix, i, j, j + strlen(word) - 1);
-                }else if ( checkHorizontal(matrix, word, i, j, false) ){
-                    drawLeftRight(matrix, i, j - strlen(word) + 1, j);
-                }
-            }
-        }
-    }
-}
-
-void drawLeftRight(vector<vector<Node>> &matrix, int row, int startCol, int endCol){
-    for(int i = startCol; i <= endCol; ++i){
-        matrix[row][i].solution = true;
-    }
-}
-
-bool checkHorizontal(vector<vector<Node>> &matrix, char* word, int x, int y, bool ltr){
-    if(ltr){
-        //adjust the end index
-        int endInd = y + strlen(word) - 1;
-        if (endInd >= matrix[0].size()){ return false; }
-        
-        for(int i = y; i <= endInd; ++i){
-            int ind = i - y;
-            if(matrix[x][i].chr != *(word + ind)){ return false; }
-        }
-    }else{
-        //adjust the end index
-        int endInd = y - strlen(word) + 1;
-        if (endInd < 0){ return false; }
-
-        for(int i = y; i >= endInd; --i){
-            int ind = y - i;
-            if(matrix[x][i].chr != *(word + ind)){ return false; }
-        }
-    }
-
+    
     return true;
 }
 
