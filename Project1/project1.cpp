@@ -12,7 +12,7 @@ struct Node{
 void findWord(vector<vector<Node>> &, char*);
 void drawWord(vector<vector<Node>> &, char*, int, int, int, int);
 bool checkWord(vector<vector<Node>> &, char*, int, int, int, int);
-void printMatrix(vector<vector<Node>> &);
+void printMatrix(vector<vector<Node>>);
 
 int main(int argc, char **argv)
 {
@@ -50,29 +50,30 @@ int main(int argc, char **argv)
 void findWord(vector<vector<Node>> &matrix, char* word){
     for(int i = 0; i < matrix.size(); ++i){
         for(int j = 0; j < matrix[0].size(); ++j){
-            //check left to right
+            //check all possible directions
             if(checkWord(matrix, word, i, 0, j, 1)){
                 drawWord(matrix, word, i, 0, j, 1);
             }
-            //check right to left
             if(checkWord(matrix, word, i, 0, j, -1)){
                 drawWord(matrix, word, i, 0, j, -1);
             }
-            //check top to bottom
             if(checkWord(matrix, word, i, 1, j, 0)){
                 drawWord(matrix, word, i, 1, j, 0);
             }
-            //check bottom to top
             if(checkWord(matrix, word, i, -1, j, 0)){
                 drawWord(matrix, word, i, -1, j, 0);
             }
-            //check left to right diagonal
             if(checkWord(matrix, word, i, 1, j, 1)){
                 drawWord(matrix, word, i, 1, j, 1);
             }
-            //check right to left diagonal
+            if(checkWord(matrix, word, i, 1, j, -1)){
+                drawWord(matrix, word, i, 1, j, -1);
+            }
             if(checkWord(matrix, word, i, -1, j, -1)){
                 drawWord(matrix, word, i, -1, j, -1);
+            }
+            if(checkWord(matrix, word, i, -1, j, 1)){
+                drawWord(matrix, word, i, -1, j, 1);
             }
         }
     }
@@ -104,7 +105,7 @@ bool checkWord(vector<vector<Node>> &matrix, char* word, int x, int delX, int y,
 }
 
 //only print characters in the solution - add * to excluded chars
-void printMatrix(vector<vector<Node>> &matrix){
+void printMatrix(vector<vector<Node>> matrix){
     for(int i = 0; i < matrix.size(); ++i){
         for(int j = 0; j < matrix[0].size(); ++j){
             if(matrix[i][j].solution){
