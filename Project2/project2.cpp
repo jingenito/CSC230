@@ -22,6 +22,8 @@ void RetrieveData(unsigned, Person*, Person*);
 
 int main(int argc, char** argv)
 {
+    if(argc < 2){ return 0; }
+
     //intialize variables
     clock_t start, end;
     double duration;
@@ -102,35 +104,40 @@ void AppendData(unsigned& dataC, Person*& dataV, Person*& data)
 void DeleteData(unsigned& dataC, Person*& dataV, Person*& data)
 {
     unsigned last = 0;
+    bool deletedEntry = false;
 
     for(unsigned i = 0; i < dataC; ++i){
         Person p = dataV[i];
+        
         if(!p.empty && p.SSN == data->SSN && p.Name == data->Name){
             RemoveAt(dataC, dataV, i);
             deleted++;
+            deleted = true;
         }else if(p.empty){
             last = i;
             break;
         }
     }
+    
+    if(deletedEntry){
+        //last needs to be casted as a double to not truncate the output
+        double prop = (double)last / dataC;
+        if(prop < 0.25){
+            dataC /= 2;
+            Person* temp = dataV; //create a copy of the dataV to delete
 
-    //last needs to be casted as a double to not truncate the output
-    double prop = (double)last / dataC;
-    if(prop < 0.25){
-        dataC /= 2;
-        Person* temp = dataV; //create a copy of the dataV to delete
+            dataV = new Person[dataC]; //create a new array thats half the size
+            for(unsigned i = 0; i < dataC; ++i){
+                dataV[i] = temp[i];
+            }
 
-        dataV = new Person[dataC]; //create a new array thats half the size
-        for(unsigned i = 0; i < dataC; ++i){
-            dataV[i] = temp[i];
+            delete[] temp;
         }
-
-        delete[] temp;
     }
 }
 
 void RemoveAt(unsigned dataC, Person*& dataV, unsigned index){
-    for(unsigned i = index; i < dataC; ++i){
+    for(unsigned i = index; i < dataC - 1; ++i){
         dataV[i] = dataV[i + 1];
     }
 }
