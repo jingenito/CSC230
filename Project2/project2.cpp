@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -14,38 +15,72 @@ unsigned inserted = 0;
 unsigned deleted = 0;
 unsigned retrieved = 0;
 
-void AppendData(unsigned&, Person*&, Person&);
-void DeleteData(unsigned&, Person*&, Person&);
+void AppendData(unsigned&, Person*&, Person*&);
+void DeleteData(unsigned&, Person*&, Person*&);
 void RemoveAt(unsigned, Person*&, unsigned);
-void RetrieveData(unsigned, Person*, Person);
+void RetrieveData(unsigned, Person*, Person*);
 
 int main(int argc, char** argv)
 {
+    //intialize variables
+    clock_t start, end;
+    double duration;
+
+    char chr;
+    string ssn, fname, lname;
+
+    start = clock();
+
     unsigned dataSize = 1000;
     Person* dataV = new Person[dataSize];
-    
-    unsigned count = 1000;
-    for(unsigned i = 0; i <= dataSize; ++i){
-        Person p;
-        p.empty = false;
-        p.Name = "test";
-        p.SSN = "0";
 
-        AppendData(count, dataV, p);
+    fstream input(*(argv + 1));
+    while(!input.eof()){
+        //read the input line
+        input >> chr >> ssn >> fname >> lname;
+
+        Person* p = new Person;
+        p->empty = false;
+        p->SSN = ssn;
+        p->Name = fname + " " + lname;
+
+        switch(chr){
+            case 'i':
+                AppendData(dataSize, dataV, p);
+                break;
+            case 'r':
+                RetrieveData(dataSize, dataV, p);
+                break;
+            case 'd':
+                DeleteData(dataSize, dataV, p);
+                break;
+        }
     }
+    input.close(); //close the file stream
 
-    cout << count << endl;
+    end = clock();
+    duration = ( end - start ) / (double) CLOCKS_PER_SEC;
+
+    unsigned itemsC = inserted - deleted;
+    cout << "The Number of Valid Insertation: " << inserted << endl;
+    cout << "The Number of Valid Deletion: " << deleted << endl;
+    cout << "The Number of Valid Retrieval: " << retrieved << endl;
+    cout << "Item numbers in the array: " << itemsC << endl;
+    cout << "Array Size is: " << dataSize << endl;
+    cout << "Time elapsed: " << duration << endl;
+    
+    return 0;
 }
 
-void AppendData(unsigned& dataC, Person*& dataV, Person& data)
+void AppendData(unsigned& dataC, Person*& dataV, Person*& data)
 {
     for(unsigned i = 0; i < dataC; ++i){
         Person p = dataV[i];
         if(p.empty){
-            dataV[i] = data;
+            dataV[i] = *data;
             inserted++;
             return;
-        }else if(p.SSN == data.SSN){
+        }else if(p.SSN == data->SSN){
             return;
         }
     }
@@ -59,18 +94,18 @@ void AppendData(unsigned& dataC, Person*& dataV, Person& data)
         dataV[i] = temp[i];
     }
 
-    dataV[oldC] = data; //insert the data into the position of the old size
+    dataV[oldC] = *data; //insert the data into the position of the old size
     inserted++;
     delete[] temp;
 }
 
-void DeleteData(unsigned& dataC, Person*& dataV, Person& data)
+void DeleteData(unsigned& dataC, Person*& dataV, Person*& data)
 {
     unsigned last = 0;
 
     for(unsigned i = 0; i < dataC; ++i){
         Person p = dataV[i];
-        if(!p.empty && p.SSN == data.SSN && p.Name == data.Name){
+        if(!p.empty && p.SSN == data->SSN && p.Name == data->Name){
             RemoveAt(dataC, dataV, i);
             deleted++;
         }else if(p.empty){
@@ -95,14 +130,16 @@ void DeleteData(unsigned& dataC, Person*& dataV, Person& data)
 }
 
 void RemoveAt(unsigned dataC, Person*& dataV, unsigned index){
-    cout << "Not Implemented Exception - RemoveAt" << endl;
+    for(unsigned i = index; i < dataC; ++i){
+        dataV[i] = dataV[i + 1];
+    }
 }
 
-void RetrieveData(unsigned dataC, Person* dataV, Person data)
+void RetrieveData(unsigned dataC, Person* dataV, Person* data)
 {
     for(unsigned i = 0; i < dataC; ++i){
         Person p = dataV[i];
-        if(!p.empty && p.SSN == data.SSN && p.Name == data.Name){
+        if(!p.empty && p.SSN == data->SSN && p.Name == data->Name){
             retrieved++;
             return;
         }
