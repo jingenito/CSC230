@@ -69,7 +69,8 @@ int main(int argc, char** argv)
     cout << "The Number of Valid Retrieval: " << retrieved << endl;
     cout << "Item numbers in the array: " << itemsC << endl;
     cout << "Array Size is: " << dataSize << endl;
-    cout << "Time elapsed: " << duration << endl;
+    cout.precision(5);
+    cout << "Time elapsed: " << fixed << duration << endl;
     
     return 0;
 }
@@ -112,7 +113,7 @@ void DeleteData(unsigned& dataC, Person*& dataV, Person*& data)
         if(!p.empty && p.SSN == data->SSN && p.Name == data->Name){
             RemoveAt(dataC, dataV, i);
             deleted++;
-            deleted = true;
+            deletedEntry = true;
         }else if(p.empty){
             last = i;
             break;
