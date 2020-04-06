@@ -5,7 +5,12 @@ using namespace std;
 
 int main()
 {
-   string msg = "Hello World";
+   string s1 = "815904565";
+   string s2 = "912741495";
 
-   cout << msg << endl;
+   if(s1 < s2){
+      cout << "true" << endl;
+   }
+
+   return 0;
 }
