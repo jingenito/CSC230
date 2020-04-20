@@ -21,26 +21,29 @@ int main(int argc, char** argv)
     int dataCount = 10007; //store the count of data
     int collisionCount = 0; //store the collision count
     int lineCount = 0; //store a count of the lines read from the input file
-    char* data[dataCount + 1];
-
+    long *data = new long[100000];
+    
     fstream input(*(argv + 1)); //create a filestream
     while(!input.eof()){
         char* s;
         input >> s; //get the next line from the filestream
         long hs = hashcode(s) % dataCount; //calculate h(s) mod 10007
-        
-        if(data[hs]){
-            collisionCount++;
+
+        if(data[hs] == 0){
+            data[hs] = hs; //storing in a data array to keep track for collisions
         }else{
-            data[hs] = s; //storing in a data array to keep track for collisions
+            collisionCount++;
         }
         lineCount++;
     }
 
     input.close(); //close the file stream
-
+    delete[] data;
+    
     cout << "Total Input is " << lineCount - 1 << endl;
     cout << "Collision # is " << collisionCount << endl;
+
+    return 0;
 }
 
 long hashcode(char* s){
