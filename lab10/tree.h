@@ -5,6 +5,27 @@ template <class V>
 class tree {
     TreeNode<V> * root;
     int size;
+
+    //inserts the value x starting into the subtree
+    void insertAtNode(TreeNode<V>* t, V x){
+        if(t->getDatum() > x){
+            //insert left
+            if(t->getLeft() == nullptr){
+                t->setLeft(new TreeNode<V>(x));
+                size++;
+            }else{
+                insertAtNode(t->getLeft(), x);
+            }
+        }else{
+            //insert right
+            if(t->getRight() == nullptr){
+                t->setRight(new TreeNode<V>(x));
+                size++;
+            }else{
+                insertAtNode(t->getRight(), x);
+            }
+        }
+    }
     
     public:
     // default constructor
@@ -16,22 +37,33 @@ class tree {
 
     // search value x in tree rooted at node t    
     bool treeSearch(V x, TreeNode<V>* t){
-        
         if(t == nullptr) return false;
         if(t->getDatum() == x) return true;
         return treeSearch(x, t->getLeft()) || treeSearch(x, t->getRight());
     }
     
     bool treeSearch(V x){
-        treeSearch(x, root);
+        return treeSearch(x, root);
     }
     
 
     // binary search value x in tree rooted at node t
     bool treeBSearch(V x, TreeNode<V>* t){
-
-      // implement this method
-      return false;
+        if(t == nullptr){ return false; }
+        if(t->getDatum() == x){ 
+            return true; 
+        }else if(t->getDatum() > x){
+            //search left subtree
+            if(t->getLeft()){
+                return treeBSearch(x, t->getLeft());
+            }
+        }else{
+            //search right subtree
+            if(t->getRight()){
+                return treeBSearch(x, t->getRight());
+            }
+        }
+        return false;
     }
     
     bool treeBSearch(V x){
@@ -40,15 +72,20 @@ class tree {
     
     // check node t is leaf
     bool isLeaf(TreeNode<V>* t){
-
       //implement this method
-      return false;
+      return t->getLeft() == NULL && t->getRight() == NULL;
     }
     
     // find the height of the tree rooted at node t
     int height(TreeNode<V>* t){
-      //implement this method
-      return 0;
+        //implement this method
+        int left = 0;
+        if(t->getLeft())
+            left = height(t->getLeft());
+        int right = 0;
+        if(t->GetRight())
+            right = height(t->getRight());
+        return left > right ? left : right;
     }
     
     int height(){
@@ -57,8 +94,17 @@ class tree {
     
     // find the number of nodes of tree rooted at t
     int nNodes(TreeNode<V>* t){
-      //implement this method
-      return 0;
+        //implement this method
+        int count = 1; //initialize to 1 to count this node
+        //count left subtree
+        if(t->getLeft()){
+            count += nNodes(t->getLeft());
+        }
+        //count right subtree
+        if(t->getRight()){
+            count += nNodes(t->getRight());
+        }
+        return count;
     }
     
     int nNodes(){
@@ -67,16 +113,13 @@ class tree {
 
     // insert value x to the current tree object
     void insert(V x){
-        if(root){ 
-            root = x; //set the root to x if its null
-        }else if(root->getDatum() > x){
-            //insert left subtree
-            TreeNode<V>*t = root->getLeft();
-            while(!t){
-                t = t->getLeft();
-            }
+        //implement this method
+        if(root == nullptr){ 
+            root = new TreeNode<V>(x); //set the root to x if its null
+            size++;
         }else{
-
+            //size will be updated inside the function
+            insertAtNode(root, x);
         }
     }
     
