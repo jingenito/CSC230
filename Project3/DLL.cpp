@@ -85,12 +85,10 @@ bool DLL::insert(string ss, string name, int & count){
         return true;
     }else{
         Node* n = headPtr;
-        int insert_ss = stoi(ss); //converting to integer for logical comparison
         while(n->succ != nullptr){
-            int curr_ss = stoi(n->ssn);
-            if(curr_ss == insert_ss){ return false; } //check for existing ssn
+            if(ss.compare(n->ssn) == 0){ return false; } //check for existing ssn
 
-            if(curr_ss < insert_ss){
+            if(ss.compare(n->ssn) > 0){
                 n = n->succ;
             }else if(n == headPtr){
                 //beginning of the list
@@ -155,7 +153,7 @@ bool DLL::insert(string ss, string name, int & count){
 bool DLL::remove(string ss, int & count){
     Node* n = headPtr;
     while(n != nullptr){
-        if(ss == n->ssn){
+        if(ss.compare(n->ssn) == 0){
             //found ssn to remove
             if(n->pred == nullptr){
                 //remove first node
