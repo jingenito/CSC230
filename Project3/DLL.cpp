@@ -89,7 +89,7 @@ bool DLL::insert(string ss, string name, int &count)
     else
     {
         Node *n = headPtr;
-        while (n->succ != nullptr && ss.compare(n->ssn) >= 0)
+        while (n->succ != nullptr && ss.compare(n->ssn) > 0)
         {
             n = n->succ;
         }
@@ -99,7 +99,7 @@ bool DLL::insert(string ss, string name, int &count)
             return false;
         } //check for existing ssn
 
-        if (n->pred == nullptr)
+        if (n->pred == nullptr && n->succ != nullptr)
         {
             //beginning of the list
             //new node is new headptr
@@ -124,7 +124,7 @@ bool DLL::insert(string ss, string name, int &count)
             Node *p = new Node();
             p->ssn = ss;
             p->name = name;
-            //insert new node p
+            //insert node p before n
             Node* temp = n->pred;
             p->succ = n;
             n->pred = p;
@@ -168,11 +168,11 @@ bool DLL::remove(string ss, int & count){
         n = n->succ;
     }
 
-    if(ss.compare(n->ssn) != 0){
+    if(n->succ == nullptr && ss.compare(n->ssn) != 0){
         return false; //no match found
     }
 
-    if(n->pred == nullptr){
+    if(n->pred == nullptr && n->succ != nullptr){
         //remove first node
         Node* t = n->succ;
         headPtr = t;
