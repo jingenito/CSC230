@@ -155,7 +155,7 @@ bool DLL::insert(string ss, string name, int & count){
 bool DLL::remove(string ss, int & count){
     Node* n = headPtr;
     while(n != nullptr){
-        if(ss.compare(n->ssn) == 0){
+        if(ss == n->ssn){
             //found ssn to remove
             if(n->pred == nullptr){
                 //remove first node
@@ -164,7 +164,7 @@ bool DLL::remove(string ss, int & count){
                 headPtr->pred = nullptr;
                 delete n;
                 //update counts
-                count--;
+                count++;
                 itemCount--;
                 return true;
             }else if(n->succ != nullptr){
@@ -177,7 +177,7 @@ bool DLL::remove(string ss, int & count){
                 s->pred = p;
                 delete n;
                 //update counts
-                count--;
+                count++;
                 itemCount--;
                 return true;
             }else{
@@ -186,7 +186,7 @@ bool DLL::remove(string ss, int & count){
                 t->succ = nullptr;
                 delete n;
                 //update counts
-                count--;
+                count++;
                 itemCount--;
                 return true;
 
