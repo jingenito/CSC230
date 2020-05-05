@@ -72,10 +72,12 @@ int DLL::search(string ss)const{
 // 2. node should be inserted to the beginning of the list
 // 3. node should be inserted to the middle of the list
 // 4. node should be inserted to the end of the list
-bool DLL::insert(string ss, string name, int & count){
-    if(headPtr == nullptr){
+bool DLL::insert(string ss, string name, int &count)
+{
+    if (headPtr == nullptr)
+    {
         //list is empty set the headptr
-        Node* n = new Node();
+        Node *n = new Node();
         n->name = name;
         n->ssn = ss;
         headPtr = n;
@@ -83,65 +85,75 @@ bool DLL::insert(string ss, string name, int & count){
         count++;
         itemCount++;
         return true;
-    }else{
-        Node* n = headPtr;
-        while(n->succ != nullptr){
-            if(ss.compare(n->ssn) == 0){ return false; } //check for existing ssn
-
-            if(ss.compare(n->ssn) > 0){
-                n = n->succ;
-            }else if(n == headPtr){
-                //beginning of the list
-                //new node is new headptr
-                Node* temp = headPtr;
-                //create a new node
-                Node* p = new Node();
-                p->ssn = ss;
-                p->name = name;
-                //insert the node
-                headPtr = p;
-                headPtr->succ = temp;
-                temp->pred = headPtr;
-                //update counters
-                count++;
-                itemCount++;
-                return true;
-            }else{
-                //insert into the middle of the list
-                //create a new node
-                Node* p = new Node();
-                p->ssn = ss;
-                p->name = name;
-                Node* temp = headPtr; //create a temp copy of head
-                //insert p into the list
-                p->succ = n;
-                n->pred = p;
-                temp->succ = p;
-                p->pred = temp;
-                //update counters
-                count++;
-                itemCount++;
-                return true;                
-            }
+    }
+    else
+    {
+        Node *n = headPtr;
+        while (n->succ != nullptr && ss.compare(n->ssn) >= 0)
+        {
+            n = n->succ;
         }
 
-        //append new node to the end of the list
-        Node* p = new Node();
-        p->ssn = ss;
-        p->name = name;
+        if (ss.compare(n->ssn) == 0)
+        {
+            return false;
+        } //check for existing ssn
 
-        n->succ = p;
-        p->pred = n;
+        if (n->pred == nullptr)
+        {
+            //beginning of the list
+            //new node is new headptr
+            Node *temp = headPtr;
+            //create a new node
+            Node *p = new Node();
+            p->ssn = ss;
+            p->name = name;
+            //insert the node
+            headPtr = p;
+            headPtr->succ = temp;
+            temp->pred = headPtr;
+            //update counters
+            count++;
+            itemCount++;
+            return true;
+        }
+        else if (n->succ != nullptr)
+        {
+            //insert into the middle of the list
+            //create a new node
+            Node *p = new Node();
+            p->ssn = ss;
+            p->name = name;
+            //insert new node p
+            Node* temp = n->pred;
+            p->succ = n;
+            n->pred = p;
+            temp->succ = p;
+            p->pred = temp;
+            //update counters
+            count++;
+            itemCount++;
+            return true;
+        }
+        else
+        {
+            //append new node to the end of the list
+            Node *p = new Node();
+            p->ssn = ss;
+            p->name = name;
 
-        //update counters
-        count++;
-        itemCount++;
-        return true;
+            n->succ = p;
+            p->pred = n;
+
+            //update counters
+            count++;
+            itemCount++;
+            return true;
+        }
     }
 
     return false; //this should never happen
 }
-
 
 // remove node containing ss value
 // if there is no node containing ss, return false; otherwise true
@@ -152,48 +164,50 @@ bool DLL::insert(string ss, string name, int & count){
 // 4. node containing ss value is the last node of the list
 bool DLL::remove(string ss, int & count){
     Node* n = headPtr;
-    while(n != nullptr){
-        if(ss.compare(n->ssn) == 0){
-            //found ssn to remove
-            if(n->pred == nullptr){
-                //remove first node
-                Node* t = n->succ;
-                headPtr = t;
-                headPtr->pred = nullptr;
-                delete n;
-                //update counts
-                count++;
-                itemCount--;
-                return true;
-            }else if(n->succ != nullptr){
-                //remove node from middle
-                //copy pred and succ
-                Node* p = n->pred;
-                Node* s = n->succ;
-                //remove link to n
-                p->succ = s;
-                s->pred = p;
-                delete n;
-                //update counts
-                count++;
-                itemCount--;
-                return true;
-            }else{
-                //remove last node
-                Node* t = n->pred;
-                t->succ = nullptr;
-                delete n;
-                //update counts
-                count++;
-                itemCount--;
-                return true;
-
-            }
-        }
+    while(n->succ != nullptr && ss.compare(n->ssn) != 0){
         n = n->succ;
     }
 
-    return false; //empty list or no match found
+    if(ss.compare(n->ssn) != 0){
+        return false; //no match found
+    }
+
+    if(n->pred == nullptr){
+        //remove first node
+        Node* t = n->succ;
+        headPtr = t;
+        headPtr->pred = nullptr;
+        delete n;
+        //update counts
+        count++;
+        itemCount--;
+        return true;
+    }else if(n->succ != nullptr){
+        //remove node from middle
+        //copy pred and succ
+        Node* p = n->pred;
+        Node* s = n->succ;
+        //remove link to n
+        p->succ = s;
+        s->pred = p;
+        delete n;
+        //update counts
+        count++;
+        itemCount--;
+        return true;
+    }else{
+        //remove last node
+        Node* t = n->pred;
+        t->succ = nullptr;
+        delete n;
+        //update counts
+        count++;
+        itemCount--;
+        return true;
+
+    }
+
+    return false; //empty list 
 }
 
 // return the number of the nodes
