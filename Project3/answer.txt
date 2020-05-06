@@ -1,0 +1,4 @@
+Project 2 was implemented using dynamic arrays which, although have O(1) time complexity for MOST data insertion/retrieval, become slow
+when resizing with large amounts of data. When the dynamic array resizes the time complexity will be O(n) since each element needs to
+be coppied to a new array. Since project 3 is implemented using a linked list, no dynamic resizing is required so data insertion/retrieval 
+is better in the long run even though the time complexity is O(n).
