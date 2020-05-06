@@ -74,6 +74,7 @@ class SLL {
     
     // remove the node with key value: item1
     bool remove(U item1){
+      if(headPtr == nullptr){ return false; } //empty list
       //implement this method
       Node<U> *n = headPtr;
       Node<U> *pred = nullptr;
@@ -98,10 +99,17 @@ class SLL {
         delete n;
         size--;
         return true;
-      }else{
+      }else if(pred != nullptr){
         //remove the last node
         pred->next = nullptr;
         delete n;
+        size--;
+        return true;
+      }else{
+        //headnode is the only node in the list
+        Node<U> *t = headPtr;
+        headPtr = nullptr;
+        delete t;
         size--;
         return true;
       }

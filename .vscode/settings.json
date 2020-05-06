@@ -40,6 +40,7 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "xstring": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "xutility": "cpp"
     }
 }
